@@ -11,9 +11,10 @@ def _connect():
 def init_db():
     with _connect() as conn:
         conn.execute("""
-            CREATE TABLE IF NOT EXISTS gastos (
+            CREATE TABLE IF NOT EXISTS transacoes (
                 id        INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_id   INTEGER NOT NULL,
+                tipo      TEXT    NOT NULL,
                 valor     REAL    NOT NULL,
                 descricao TEXT    NOT NULL,
                 data      TEXT    NOT NULL
@@ -21,9 +22,10 @@ def init_db():
         """)
 
 
-def inserir_gasto(user_id: int, valor: float, descricao: str):
+def inserir_transacao(user_id: int, tipo: str, valor: float, descricao: str):
     with _connect() as conn:
         conn.execute(
-            "INSERT INTO gastos (user_id, valor, descricao, data) VALUES (?, ?, ?, ?)",
-            (user_id, valor, descricao, date.today().isoformat()),
+            "INSERT INTO transacoes (user_id, tipo, valor, descricao, data) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (user_id, tipo, valor, descricao, date.today().isoformat()),
         )
