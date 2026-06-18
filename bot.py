@@ -5,6 +5,7 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from database.db import init_db
 from handlers.gastos import gasto_command
+from handlers.ganhos import ganho_command
 
 
 load_dotenv()
@@ -25,7 +26,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "Comandos disponíveis:\n"
         "/start — inicia o bot\n"
         "/help — mostra esta mensagem\n"
-        "/gasto <valor> <descrição> — registra um gasto"
+        "/gasto <valor> <descrição> — registra um gasto\n"
+        "/ganho <valor> <descrição> — registra um ganho"
     )
 
 if __name__ == "__main__":
@@ -37,6 +39,7 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", help_command))
     app.add_handler(CommandHandler("gasto", gasto_command))
+    app.add_handler(CommandHandler("ganho", ganho_command))
 
     print("Bot rodando...")
     app.run_polling()
