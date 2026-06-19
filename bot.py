@@ -7,6 +7,11 @@ from database.db import init_db
 from handlers.gastos import gasto_command
 from handlers.ganhos import ganho_command
 from handlers.resumo import resumo_command
+from handlers.recorrentes import (
+    recorrente_command,
+    recorrentes_command,
+    recorrente_remover_command,
+)
 
 
 load_dotenv()
@@ -29,7 +34,10 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/help — mostra esta mensagem\n"
         "/gasto <valor> <descrição> — registra um gasto\n"
         "/ganho <valor> <descrição> — registra um ganho\n"
-        "/resumo [AAAA-MM] — balanço do mês (atual se omitido)"
+        "/resumo [AAAA-MM] — balanço do mês (atual se omitido)\n"
+        "/recorrente <gasto|ganho> <valor> <descrição> — cadastra um fixo mensal\n"
+        "/recorrentes — lista seus lançamentos recorrentes\n"
+        "/recorrente_remover <id> — remove um recorrente"
     )
 
 if __name__ == "__main__":
@@ -43,6 +51,9 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("gasto", gasto_command))
     app.add_handler(CommandHandler("ganho", ganho_command))
     app.add_handler(CommandHandler("resumo", resumo_command))
+    app.add_handler(CommandHandler("recorrente", recorrente_command))
+    app.add_handler(CommandHandler("recorrentes", recorrentes_command))
+    app.add_handler(CommandHandler("recorrente_remover", recorrente_remover_command))
 
     print("Bot rodando...")
     app.run_polling()

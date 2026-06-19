@@ -20,6 +20,16 @@ def init_db():
                 data      TEXT    NOT NULL
             )
         """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS recorrentes (
+                id        INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id   INTEGER NOT NULL,
+                tipo      TEXT    NOT NULL,
+                valor     REAL    NOT NULL,
+                descricao TEXT    NOT NULL,
+                desde     TEXT    NOT NULL
+            )
+        """)
 
 
 def inserir_transacao(user_id: int, tipo: str, valor: float, descricao: str):
@@ -57,5 +67,48 @@ def gastos_por_descricao(user_id: int, ano_mes: str):
             "WHERE user_id = ? AND tipo = 'gasto' AND strftime('%Y-%m', data) = ? "
             "GROUP BY descricao "
             "ORDER BY total DESC",
+            (user_id, ano_mes),
+        ).fetchall()
+
+
+def inserir_recorrente(user_id: int, tipo: str, valor: float, descricao: str, desde: str):
+    with _connect() as conn:
+        conn.execute(
+            "INSERT INTO recorrentes (user_id, tipo, valor, descricao, desde) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (user_id, tipo, valor, descricao, desde),
+        )
+
+
+def listar_recorrentes(user_id: int):
+    """Retorna todos os recorrentes do usuário: (id, tipo, valor, descricao, desde)."""
+    with _connect() as conn:
+        return conn.execute(
+            "SELECT id, tipo, valor, descricao, desde "
+            "FROM recorrentes "
+            "WHERE user_id = ? "
+            "ORDER BY id",
+            (user_id,),
+        ).fetchall()
+
+
+def remover_recorrente(user_id: int, rec_id: int) -> int:
+    """Remove um recorrente por id (restrito ao usuário). Retorna nº de linhas removidas."""
+    with _connect() as conn:
+        cursor = conn.execute(
+            "DELETE FROM recorrentes WHERE id = ? AND user_id = ?",
+            (rec_id, user_id),
+        )
+        return cursor.rowcount
+
+
+def recorrentes_ativos_do_mes(user_id: int, ano_mes: str):
+    """Retorna (tipo, valor, descricao) dos recorrentes ativos no mês (desde <= ano_mes)."""
+    with _connect() as conn:
+        return conn.execute(
+            "SELECT tipo, valor, descricao "
+            "FROM recorrentes "
+            "WHERE user_id = ? AND desde <= ? "
+            "ORDER BY id",
             (user_id, ano_mes),
         ).fetchall()
