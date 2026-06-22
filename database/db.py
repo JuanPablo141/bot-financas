@@ -112,3 +112,12 @@ def recorrentes_ativos_do_mes(user_id: int, ano_mes: str):
             "ORDER BY id",
             (user_id, ano_mes),
         ).fetchall()
+
+
+def gastos_consolidados_do_mes(user_id: int, ano_mes: str):
+    """Gastos do mês por descrição (avulsos + recorrentes), ordenados do maior ao menor."""
+    gastos = dict(gastos_por_descricao(user_id, ano_mes))
+    for tipo, valor, descricao in recorrentes_ativos_do_mes(user_id, ano_mes):
+        if tipo == "gasto":
+            gastos[descricao] = gastos.get(descricao, 0.0) + valor
+    return sorted(gastos.items(), key=lambda item: item[1], reverse=True)
