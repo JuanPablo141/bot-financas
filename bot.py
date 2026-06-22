@@ -12,6 +12,7 @@ from handlers.recorrentes import (
     recorrentes_command,
     recorrente_remover_command,
 )
+from handlers.grafico import grafico_command
 
 
 load_dotenv()
@@ -37,7 +38,8 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "/resumo [AAAA-MM] — balanço do mês (atual se omitido)\n"
         "/recorrente <gasto|ganho> <valor> <descrição> — cadastra um fixo mensal\n"
         "/recorrentes — lista seus lançamentos recorrentes\n"
-        "/recorrente_remover <id> — remove um recorrente"
+        "/recorrente_remover <id> — remove um recorrente\n"
+        "/grafico [AAAA-MM] — pizza dos gastos do mês"
     )
 
 if __name__ == "__main__":
@@ -54,6 +56,7 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("recorrente", recorrente_command))
     app.add_handler(CommandHandler("recorrentes", recorrentes_command))
     app.add_handler(CommandHandler("recorrente_remover", recorrente_remover_command))
+    app.add_handler(CommandHandler("grafico", grafico_command))
 
     print("Bot rodando...")
     app.run_polling()
