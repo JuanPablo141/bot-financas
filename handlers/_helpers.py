@@ -1,6 +1,24 @@
+from datetime import date, datetime
 from telegram import Update
 from telegram.ext import ContextTypes
 from database.db import inserir_transacao
+
+
+def resolver_ano_mes(args):
+    """Resolve o mês a partir dos argumentos do comando.
+
+    Sem argumento → mês atual. Com argumento → valida o formato AAAA-MM.
+    Retorna (ano_mes, valido): se o formato for inválido, retorna (None, False).
+    """
+    if not args:
+        return date.today().strftime("%Y-%m"), True
+
+    ano_mes = args[0]
+    try:
+        datetime.strptime(ano_mes, "%Y-%m")
+    except ValueError:
+        return None, False
+    return ano_mes, True
 
 
 async def registrar_transacao(
